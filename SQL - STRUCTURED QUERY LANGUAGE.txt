@@ -1,0 +1,518 @@
+SQL - STRUCTURED QUERY LANGUAGE
+
+DATE          ::  YYY-MM-DD
+DATETIME      ::  YYYY-MM-DD HH:MM:SS
+TIMESTAMP     ::  YYYYMMDDHHMMSS
+TIME          ::  HH:MM:SS
+DECIMAL       ::  Double stored as string
+
+
+
+
+===============
+TYPES OF KEYS :
+===============
+
+1. PRIMARY KEY => UNIQUE KEY+NOT NULL
+2. UNIQUE KEY => fields are unique and null values can be accepted
+3. COMPOSITE KEY => set of 2 or more primary type of keys
+4. SURROGATE KEY => assigning an artificial primary key to each record in table which is generated using an auto_increment feature or sequence. It can be used when natural keys are not suitable or unavailable.
+
+
+
+
+TYPES OF SQL:
+1)DDL(def)- CREATE,ALTER,DROP,TRUNCATE,RENAME
+2)DRL/DQL(retrieve/query)- SELECT (WHERE,BETWEEN,IN,AND/OR/NOT,IS NULL,WILDCARD/PATTERN SEARCHING)
+3)DML(modification)- INSERT,UPDATE,DELETE
+4)DCL(control)- GRANT,REVOKE
+5)TCL(transaction control)- START,COMMIT,ROLL BACK,SAVE POINT
+
+
+1) DDL
+
+CREATE DATABASE NEW;
+USE NEW;
+CREATE TABLE DETAILS(
+name VARCHAR(20),
+id int PRIMARY KEY,
+branch VARCHAR(30)
+);
+
+Inserting elements into table=> INSERT INTO DETAILS(name,id,branch) VALUES("sarvani",20,"CSE"),("sai",21,"CSE-H");
+				Insert into details values("sai",20,"cseh");
+
+
+ALTER COMMAND:
+ALTER TABLE TABLE_NAME MODIFY COLUMN_NAME COLUMN_DATATYPE NULL; -> TO MAKE A COLUMN FIELD NULL
+
+
+SELECT * FROM DETAILS; =>inorder to fetch data from table
+
+CREATE TABLE worker(
+WORKER_ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+FIRST_NAME CHAR(25),
+LAST_NAME CHAR(25),
+SALARY INT(15),
+AGE INT(100),
+JOINING_DATE DATETIME,
+DEPARTMENT CHAR(25)
+);
+
+INSERT INTO worker (FIRST_NAME, LAST_NAME, SALARY, AGE, JOINING_DATE, DEPARTMENT) VALUES
+('Alice', 'Smith', 60000,18, '2023-02-20 10:30:00', 'HR'),
+('Bob', 'Johnson', 75000, 19,'2023-03-10 08:45:00', 'Finance'),
+('Charlie', 'Brown', 55000,25, '2023-04-05 11:15:00', 'Marketing'),
+('David', 'Williams', 70000,45, '2023-05-12 09:30:00', 'IT'),
+('Eva', 'Davis', 65000, 35, '2023-06-18 08:00:00', 'HR');
+INSERT INTO worker (FIRST_NAME, LAST_NAME, SALARY, AGE, JOINING_DATE, DEPARTMENT) VALUES
+('Lila','John',80000,25,'2023-09-30 10:00:23', 'TeamLead'),
+('Mira','John',85000,25,'2023-03-30 10:00:43', 'Marketing'),
+('Sai','Nimmagadda',95000,23,'2022-03-30 10:00:43', 'HR');
+
+SELECT * FROM worker;
+
+SELECT FIRST_NAME, SALARY FROM worker;
+
+SELECT * FROM worker WHERE AGE>18;
+
+SELECT * FROM worker WHERE age BETWEEN 15 AND 30;
+
+Select * from Worker where DEPARTMENT = 'HR';
+
+---- choosing department using IN 
+SELECT * FROM worker WHERE DEPARTMENT IN("HR");
+
+CREATE TABLE Customer(
+id int PRIMARY KEY,
+cname VARCHAR(255),
+Address VARCHAR(255),
+Gender char(2),
+City varchar(225),
+Pincode int
+);
+INSERT INTO Customer
+VALUES (1251, 'Ram Kumar', 'Dilbagh Nagar', 'M', 'Jalandhar', 144002),
+(1300, 'Shayam Singh', 'Ludhiana H.O', 'M', 'Ludhiana', 141001),
+(245, 'Neelabh Shukla', 'Ashok Nagar', 'M', 'Jalandhar', 144003),
+(210, 'Barkha Singh', 'Dilbagh Nagar', 'F', 'Jalandhar', 144002),
+(500, 'Rohan Arora', 'Ludhiana H.O', 'M', 'Ludhiana', 141001);
+INSERT INTO Customer
+VALUES (1252, 'Ram Kumar3', 'Dilbagh Nagar', 'M', 'Jalandhar', NULL);
+
+SELECT * FROM Customer;
+
+SELECT * FROM Customer WHERE Pincode is NULL;
+
+
+ALIAS :  select name as field_name from product;
+ 
+
+================
+STRING FUNCTIONS 
+================
+
+CONCAT : combines 2 or more strings 
+syntax: select concat('first_string','second_string') from table_name;
+here first_string,second_string are just normal strings we can add 2 or more column fields that are present in the table.
+
+
+SUBSTRING/SUBSTR : extracts a substring from a string(in sql,string's index start from 1)
+syntax: SUBSTRING(string, start, length) => select substring('string_value',2,3);
+2 indicates index of string_value (substring's 0 index element will be this string_value[2])
+3 indicates the length of the resultant substring
+
+LENGTH : returns the length of a string
+syntax : select length('string_value');
+
+
+
+
+ORDER BY : order the salary in ascending/descending order
+LIMIT m,n : helps to retrieve a specific range of rows
+m => number of rows to skip from the beginning (m=n-1)
+n => number of rows to fetch after skipping (n=1)
+
+
+
+Q)query to find the nth highest salary in a table
+select distinct price from product order by price desc limit n-1,1;
+
+Q)query to find the total salary and average salary in department
+A) select department,sum(salary) as total_salary,avg(salary) as avg_salary from employees group by department;
+
+Q) query to find the top 2 highest prices from table
+select price from employee order by price desc limit 2;
+
+Q)ending with 'i'
+A)select * from worker where FIRST_NAME LIKE '_i%';
+
+Q)printing the city names whose names start with vowels
+select city from station where upper(substring(city,1,1)) in ('A','E','I','O','U')
+
+Q)printing second highest price in a list of products
+<> => not equals to 
+select max(price) from product where price<>(select max(price) from product);
+
+Q)Query the list of CITY names ending with vowels (a, e, i, o, u) from STATION. Your result cannot contain duplicates.
+A)select distinct city from station where upper(substring(city,length(city),1)) in ('A','E','I','O','U')
+
+Q)Query the list of CITY names from STATION which have vowels (i.e., a, e, i, o, and u) as both their first and last characters. Your result cannot contain duplicates.
+A)select  city from station where upper(substring(city,1,1)) in ('A','E','I','O','U') AND
+ upper(substring(city,length(city),1)) in ('A','E','I','O','U') 
+
+Q) Can we use SELECT keyword without using FROM Clause?
+A) Yes using DUAL tables.
+
+Q) Query the list of CITY names from STATION that do not start with vowels. Your result cannot contain duplicates.
+A)select distinct city from station where upper(substring(city,1,1)) not in ('A','E','I','O','U');
+
+Q) Query the list of CITY names from STATION that do not end with vowels. Your result cannot contain duplicates.
+A) 
+
+Q)Query the difference between the maximum and minimum populations in CITY.
+A) select max(population)-min(population) from city;
+
+
+Q) Sorting workers based on ascending/descending of salaries:
+A) SELECT * FROM worker ORDER BY SALARY DESC;
+   SELECT * FROM worker ORDER BY SALARY ASC;
+
+Q) displaying only departments:
+A) select DISTINCT department from worker;
+ 
+ 
+ ** Q) finding no.of employees working in one department(hr-> ? , account-> ? ) **
+  GROUPING->AGGREGATION(COUNT)
+  
+  We use "group by" function -> aggregation function(sum,count,max,min,avg)
+  A) 
+
+  SELECT department, COUNT(department) from worker group by department;
+
+to retrieve  first 2 rowsin a table : select * from employee limit 2;
+
+o/p:-
+# department, COUNT(department)
+'HR', '2'
+'Finance', '1'
+'Marketing', '1'
+'IT', '1'
+'TeamLead', '1'
+
+====================
+ROUND,TRUNCATE,FLOOR
+====================
+SELECT ROUND(137.375,2) => 135.38
+SELECT TRUNCATE(137.375,2) => 137.375
+SELECT FLOOR(137.375) => 137
+
+
+
+Q) Find average salary per department
+A) select department, AVG(salary) from worker group by department;
+
+o/p:- # department, AVG(salary)
+HR, 62500.0000
+Finance, 75000.0000
+Marketing, 55000.0000
+IT, 70000.0000
+TeamLead, 80000.0000
+
+Q) find minimum salary per department
+A) select department, MIN(salary) from worker group by department;
+
+HAVING IS USED  DURING FILTERATION AFTER USING "GROUPBY"
+
+Q) display department whose count is having more than 2 workers?
+A) select department,COUNT(department) from worker group by department HAVING COUNT(department)>2;
+
+Q) Query the sum of Northern Latitudes (LAT_N) from STATION having values greater than  and less than . Truncate your answer to 4 decimal places.
+A) select truncate(sum(lat_n),4) from station where lat_n>38.7880 and lat_n<137.2345;
+
+Q)Query the greatest value of the Northern Latitudes (LAT_N) from STATION that is less than . Truncate your answer to 4 decimal places.
+A) select truncate(max(lat_n),4) from station where lat_n<137.2345;
+
+Q)Query the total population of all cities in CITY where District is California.
+A) select sum(population) from city where district="California";
+
+Q)Query the average population for all cities in CITY, rounded down to the nearest integer.
+A) select floor(avg(population)) from city;
+
+Q)Query the sum of the populations for all Japanese cities in CITY. The COUNTRYCODE for Japan is JPN.
+A) select sum(population) from city where countrycode="JPN";
+
+WHERE is used to filter the rows rom table
+HAVING is used to filter the rows from groups.
+
+Q)Query a count of the number of cities in CITY having a Population larger than 100000
+A) select count(*) from city where population>100000;
+
+o/p:- HR - 3
+
+
+
+----------
+----------
+
+
+2) DDL constraints
+
+A) Primary key - not null,unique and there will be only 1 primary key in a table
+
+CREATE TABLE Customer(
+id INT PRIMARYKEY,
+branchid INT,
+Firstname CHAR (50),
+LastName CHAR(50),
+DOB DATE,
+Gender CHAR(6),
+);
+
+   Foreign key - it refers to Primary key of other table. Each table can having any number                   
+                 of Foreign key
+
+   CREATE TABLE ORDER (
+id INT PRIMARY KEY,
+delivery_date DATE,
+order_placed_date DATE,
+FOREIGN KEY (cust_id) REFERENCES customer(id)
+);
+
+
+Unique and Check key example:-
+
+A) create table account(
+id int primary key,
+name varchar(255) UNIQUE,
+balance INT,
+CONSTRAINT ac_balance_chk CHECK(balance > 1000)
+);
+
+INSERT INTO account(id,name,balance) VALUES(1,"A",10000); --- A's details will be added into account table with unique name and required balance.
+
+INSERT INTO account(id,name,balance) VALUES(1,"A",20000); --- A's details will not be added by showing it as duplicates in the output(when used SELECT * FROM account; (command) )  as id,name are same details of previous row eventhough newly added balance satisfies the condition.
+
+(to delete any table from the database use DROP command :: DROP TABLE table_name; )
+
+Default key example:-
+
+A) create table accounting(
+id int primar key,
+name varchar(255) UNIQUE,
+balance int NOT NULL DEFAULT 0
+);
+
+INSERT INTO accounting(id,name) VALUES(1,"A");
+
+select * from accounting;
+
+displays balance as 0 with id,name given by the user.
+
+
+An ATTRIBUTE can be both PK&FK in table
+
+
+ALTER OPERATIONS --- ADD,MODIFY,CHANGE,DROP,RENAME
+
+
+1)ADD -- adding new column in a table
+
+create table account(
+id int primary key,
+name varchar(255) unique,
+balance int not null default 0
+);
+ALTER TABLE account ADD interest float not null default 0;
+
+
+o/p: displays columns in table( when used select * from account)
+
+
+2)MODIFY -- Changing the datatype of the existing column in table
+
+create table account(
+id int primary key,
+name varchar(255) unique,
+balance int not null default 0
+);
+ALTER TABLE ACCOUNT MODIFY INTEREST DOUBLE NOT NULL DEFAULT 0;
+
+
+o/p: when entered "desc account"(here desc means describing the datatype of the account table attributes), displays the dataypes of attributes in table 
+so float changes to double in interest command.
+
+3)CHANGE -- renaming the column.
+
+alter table account change column interest saving_interest float not null default 0;
+
+4) DROP -- drop column
+
+alter table account drop column ssaving_interest;
+
+5)RENAME -- rename the table
+alter table account rename to account_details;
+
+
+DML - DATA MODIFICATION LANGUAGE
+
+UPDATE -- UPDATE the column attribute value in the table
+example: update tablename set  attributes and its values  where (condition);
+update Customer set adddress='mumbai' , gender='m' where id=121;
+
+
+
+Set operators SUB QUERIES:
+1) Union - combines two or more select statements
+condition::  no.of first query columns must be equal to second query columns
+
+syntax: select * from accounts where post=45
+union
+select * from accounts where post=57;
+
+2)Union all -  used where duplicate rows must be printed eventhough duplicate rows must not be printed in general case scenario.
+syntax: select * from accounts1
+union all
+select * from likes1;
+
+
+3)intersect - results  common row between 2 tables
+
+"intersect" won't work in mysql
+condition::  no.of first query columns must be equal to second query columns
+syntax: select * from accounts1 intersect select * from likes1;
+
+instead of using * we can mention all the column names to print the table 
+
+select username,posts,comments from accounts1;  ///////        select * from accounts1;
+
+
+4)Except/Minus - prints 1st table's output where 1st table's rows contains data which are not common (except) in 2nd table
+
+select * from accounts1
+except
+select * from likes1;
+
+
+SUB QUERIES: query within query
+
+syntax: select (select username from likes where accounts.username=likes.username) 
+        from accounts where post=98;
+
+sub queries exists in 3 phases:
+inside WHERE clause,inside FROM clause,inside SELECT clause
+
+Subquery using FROM clause :
+SELECT MAX(rating) FROM (SELECT * FROM movie WHERE country = ‘India’) as temp;
+ 
+ Subquery using SELECT clause:
+SELECT (SELECT column_list(s) FROM T_name WHERE condition), columnList(s) FROM T2_name WHERE 
+condition; 
+
+
+
+
+Q)type of triangle
+A) select case
+when a+b<=c or b+c<=a or a+c<=b then 'Not A Triangle'
+when a=b and b=c then 'Equilateral'
+when a=b or b=c or c=a then 'Isosceles'
+else  'Scalene'
+end
+from triangles;
+
+
+16/02/24
+
+Q) sql query to print position of b in first_name named Amitabh from Worker table
+A)Approach-1 :  select position("b" in first_name) from Worker where first_name="Amitabh";
+                                
+Approach-2 : select instr(first_name,"b") from worker where first_name="Amitabh";
+
+
+Q)Removing the white spaces in first_name from Worker table 
+A) from right side: select rtrim(first_name) from Worker;
+from left side: select ltrim(first_name) from Worker;
+
+
+
+Q)replacing Example
+Replace "T" with "M":
+
+SELECT REPLACE('SQL Tutorial', 'T', 'M');
+
+OUTPUT: SQL Mutorial
+
+
+Q)sql query to print first_name,last_name from Worker into a single column called as complete_name(a space char must be included)
+A)select concact(first_name," ",last_name) as complete_name from Worker;
+
+
+Q)sql query to print worker details from Worker table with first_name ascending and department descending order.
+A)select * from Worker order by first_name asc,department desc;
+
+
+Q)sql query to print worker details from Worker table excluding first_name having Vipul and Satish.
+A) select * from worker where first_name not in ("Vipul","Satish");
+
+
+Q)sql query to print details of Workers with department named as "Admin*"
+A) Approach-1: select * from Worker where department="Admin";
+   approach-2: select * from Worker where department like "Admin%";
+
+Q) sql query to print details of worker whose first_name contains 'a'.
+A) select * from Worker where first_name like "%a%";
+
+The LIKE command is used in a WHERE clauseto search for a specified pattern in a column.
+
+ends with -- select * from Worker where first_name like "%a";
+starts with -- select * from Worker where first_name like "a%";
+
+
+Q)sql query to print worker details whose first_name ends with 'h' and contains 6 alphabets.
+A) select * from Worker where first_name like "_____h";
+
+
+Q)sql query to fetch count of employees working in department "Admin"
+A) select count(department) from Worker where department="Admin";
+
+Q)sql query to print worker details who have joined in Feb'2014.
+A) select * from worker where year(joining_date)=2014 and month(joining_date)=02;
+
+
+Q)sql query to fetch worker full names with salaries >=50000 and <=100000.
+A) select concat(first_name," ",last_name) from Worker where salary between 50000 and 100000;
+
+Q) sql to fetch no.of workers from Worker fromm various departments.
+A) select department,count(worker_id) from Worker group by department order by count(worker_id) desc;
+
+
+26:51
+18/02/24
+
+Q)sql query to print the detials of the workers who were also managers.
+A) select * from worker as w inner join title as t where w.worker_id = t.worker_ref_id;
+
+
+Q) sql query to fetch no.of same titles in the organization of different types
+select worker_title,count(worker_title) from title group by worker_title having count(worker_title)>1;
+
+Q)sql query to print only odd rows of workers from table.
+A) select * from worker where mod(worker_id,2)!=0;
+
+Q)sql query to clone new table from worker table
+A)create table clone_table like Worker;  ---- only attributes will be displayed but not the data
+to copy and insert data in new table => insert into clone_table select * from Worker;
+
+Q)sql query to fetch intersecting records of two tables.
+A)select worker.* from Worker inner join clone_table using(worker_id);
+
+Q)sql query to fetch show records from one table that another table does not have.
+A)select * from Worker left join clone_table using(worker_id) wher  
+
+
+
+
+https://leetcode.com/problems/customer-placing-the-largest-number-of-orders/?envType=list&envId=e97a9e5m
+
+https://leetcode.com/problems/actors-and-directors-who-cooperated-at-least-three-times/?envType=list&envId=e97a9e5m
